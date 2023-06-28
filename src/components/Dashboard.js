@@ -130,6 +130,8 @@ export default function Dashboard() {
     setSubjectName("");
     setTotalClasses("");
     setAttendedClasses("");
+    fetchSubjects();
+    fetchTimetable();
   };
 
   const handleSubjectClick = (subject) => {
