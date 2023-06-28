@@ -103,8 +103,10 @@ export default function Dashboard() {
     }
   };
   
-  const handleSubmit = async () => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    
+      event.preventDefault();
+    
     const studentId = JSON.parse(localStorage.getItem("user"))._id;
     if(attendedClasses>totalClasses){
       alert("Is it even possible")
