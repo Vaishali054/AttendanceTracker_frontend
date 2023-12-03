@@ -1,0 +1,39 @@
+.AdminDash{
+   
+   margin: 10px;
+   width: 100%;
+   padding-left:250px
+}
+
+.heading{
+    font-size: 25px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 700;
+    background-color: white;
+    padding: 10px 30px;
+
+    
+}
+.container-1{
+    display: flex;
+}
+
+.branches_container{
+    display: flex;
+    justify-content: space-between;
+    min-height: 497px;
+   
+    flex-wrap: wrap;
+}
+.container-2{
+    background-color: white;
+    margin-top: 10px;
+    
+}
+
+.mini-heading{
+    padding: 20px;
+    font-weight: 700;
+    font-size: 23px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
