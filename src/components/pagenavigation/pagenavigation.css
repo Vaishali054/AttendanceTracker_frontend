@@ -1,0 +1,42 @@
+.page-navigation{
+    display: flex;
+    margin-bottom: 10px;
+}
+.center{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.circle{
+    width: 44px;
+height: 44px;
+flex-shrink: 0;
+margin: 0px 5px;
+border-radius: 100%;
+border: 0.366px solid #E6E6E6;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+}
+
+.circle.active {
+  background-color: #215994; 
+    color: white;
+  }
+
+  .next.disabled {
+    pointer-events: none;
+    background-color: #ccc;
+    color: #999;
+  }
+.next{
+    border-radius: 50px;
+border: 1px solid #E6E6E6;
+width: 67px;
+height: 44px;
+flex-shrink: 0;
+margin: 0px 10px;
+cursor: pointer;
+}
+
