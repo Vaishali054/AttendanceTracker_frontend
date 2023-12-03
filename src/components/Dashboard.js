@@ -305,51 +305,6 @@ console.log(result,'hey')
             )}
           </div>
 
-          <form class="form">
-            <div class="subtitle">Let's add subjects!</div>
-            <div class="input-container ic1">
-              <input
-                id="Subject Name"
-                class="input"
-                type="text"
-                required
-                value={subjectName}
-                onChange={(e) => setSubjectName(e.target.value)}
-                placeholder="Subject Name"
-              />
-
-              <label for="Sunject Name" class="placeholder"></label>
-            </div>
-            <div class="input-container ic2">
-              <input
-                id="Total Classes"
-                class="input"
-                type="text"
-                value={totalClasses}
-                required
-                onChange={(e) => setTotalClasses(e.target.value)}
-                placeholder="Total Classes "
-              />
-
-              <label for="Total Classes" class="placeholder"></label>
-            </div>
-            <div class="input-container ic2">
-              <input
-                id="Attended Classes"
-                class="input"
-                type="text"
-                value={attendedClasses}
-                required
-                onChange={(e) => setAttendedClasses(e.target.value)}
-                placeholder="Attended Classes "
-              />
-
-              <label for="Attended Classes" class="placeholder"></label>
-            </div>
-            <button type="text" onClick={handleSubmit} class="submit">
-              submit
-            </button>
-          </form>
 
           <div className="form mydetails">
             {selectedSubject && <p className="info-info">{selectedSubject.subjectName}</p>}
