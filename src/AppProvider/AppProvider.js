@@ -5,6 +5,7 @@ const AppContext = createContext();
 export function AppProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState({});
+  const[branches,setBranches]=useState([])
 
   const getUserDetails = async (authToken) => {
     try {
@@ -56,7 +57,9 @@ export function AppProvider({ children }) {
     user,
     setUser,
     setLogin,
-    setLogout
+    setLogout,
+    branches,
+    setBranches
   };
 
   return (
