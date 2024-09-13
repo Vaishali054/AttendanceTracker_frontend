@@ -97,12 +97,12 @@ export default function AdminDashboard() {
             onClick={handleDrawerOpen}
             edge="start"
             sx={[
-              {
-                mr: 2,
-              },
-              open && { display: 'none' },
+                {
+                    mr: 2,
+                },
+                open && { display: 'none' },
             ]}
-          >
+            >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
@@ -112,17 +112,17 @@ export default function AdminDashboard() {
       </AppBar>
       <Drawer
         sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
             width: drawerWidth,
-            boxSizing: 'border-box',
-          },
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+                width: drawerWidth,
+                boxSizing: 'border-box',
+            },
         }}
         variant="persistent"
         anchor="left"
         open={open}
-      >
+        >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}

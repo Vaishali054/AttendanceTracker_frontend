@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
@@ -176,10 +174,6 @@ export default function LogIn(props) {
                 color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <ForgotPassword open={open} handleClose={handleClose} />
             <Button
               type="submit"
@@ -193,7 +187,6 @@ export default function LogIn(props) {
               Don&apos;t have an account?{' '}
               <span>
                 <Link
-                  href="/material-ui/getting-started/templates/sign-in/"
                   variant="body2"
                   sx={{ alignSelf: 'center' }}
                 >
