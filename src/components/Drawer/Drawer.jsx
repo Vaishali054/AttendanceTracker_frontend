@@ -22,7 +22,7 @@ import TimeTableForm from '../TimeTableForm/TimeTableForm'
 import TeacherForm from '../TeacherFrom/TeacherForm';
 import DepartmentForm from '../DepartmentForm/DeaprtmentForm';
 import { drawerWidth, DrawerHeader, AppBar } from '../../constants/constant';
-import {Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material';
+import {Dialog, DialogActions, DialogContent} from '@mui/material';
 
 const navItems = [
   { text: 'Teacher', path: '/admindashboard/teacher' },
@@ -35,7 +35,7 @@ const navItems = [
 export default function DrawerVariant(props) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
-  const [formType, setFormType] = React.useState(null); // State to manage which form to show
+  const [formType, setFormType] = React.useState(null);
   const location = useLocation();
 
   const getAddButtonLabel = () => {
@@ -175,12 +175,10 @@ export default function DrawerVariant(props) {
         </List>
       </Drawer>
 
-      {/* Dialog for form */}
       <Dialog
         open={!!formType}
         onClose={() => setFormType(null)}
       >
-        <DialogTitle>{`Add New ${getAddButtonLabel().split(' ')[2]}`}</DialogTitle>
         <DialogContent>
           {renderForm()}
         </DialogContent>
