@@ -1,24 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Paper } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, Box, Paper} from '@mui/material';
+import DegreeForm from '../DegreeForm/DegreeForm';
 
-const columns = [
-    { field: 'name', headerName: 'Degree Name', width: 200 },
-    { field: 'semester_count', headerName: 'No. of sems', width: 200 },
+const DegreeTable = () => {
+  const [rows, setRows] = useState([
+    { id: 1, degree: 'B.Sc. Computer Science', semOffered: 6 },
+    { id: 2, degree: 'M.Sc. Computer Science', semOffered: 4 },
+  ]);
+
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+
+  const handleEditClick = (row) => {
+    setSelectedRow(row); 
+    setOpenEditDialog(true); 
+  };
+
+  const handleFormSubmit = (updatedData) => {
+    setRows((prevRows) =>
+      prevRows.map((row) => (row.id === updatedData.id ? updatedData : row))
+    );
+    setOpenEditDialog(false); 
+  };
+
+  const columns = [
+    { field: 'degree', headerName: 'Degree Name', width: 200 },
+    { field: 'semOffered', headerName: 'No. of sems', width: 200 },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 150,
+      renderCell: (params) => (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleEditClick(params.row)}
+        >
+          Edit
+        </Button>
+      ),
+    },
   ];
 
-  const rows = [
-    { id: 1, name: "Computer Science", semester_count: 8 },
-    { id: 2, name: "Mechanical Engineering", semester_count: 8 },
-    { id: 3, name: "Physics", semester_count: 6 },
-    { id: 4, name: "Mathematics", semester_count: 6 },
-    { id: 5, name: "Chemistry", semester_count: 6 },
-  ];
-  
-
-export default function Degreetable() {
   return (
-    <Box 
+    <>
+     <Box 
       sx={{ 
         display: 'flex',
         justifyContent: 'center',
@@ -27,15 +54,29 @@ export default function Degreetable() {
         width: '100%'
       }}
     >
-      <Paper sx={{ height: '100%', width: '30%' }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          disableSelectionOnClick
-        />
+      <Paper sx={{ height: '100%', width: '57%' }}>
+          <DataGrid rows={rows} columns={columns} pageSize={5} />
       </Paper>
     </Box>
+
+      <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
+        <DialogContent>
+          {selectedRow && (
+            <DegreeForm
+              edit={true}
+              initialData={selectedRow}
+              onSubmit={handleFormSubmit}
+            />
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenEditDialog(false)} color="secondary">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
-}
+};
+
+export default DegreeTable;
