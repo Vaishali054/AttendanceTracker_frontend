@@ -1,56 +1,127 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Grid, Container, Typography } from '@mui/material';
+import { Container, Typography, Grid, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
-const TimeTableForm = ({ edit = false, initialData = { degree: '', semOffered: '' } }) => {
+const departments = ['Engineering', 'Marketing', 'HR'];
+const degrees = ['B.Sc.', 'B.Com.', 'MBA'];
+const semesters = ['1st Semester', '2nd Semester', '6th Semester'];
+const subjects = ['Algorithms', 'Marketing Principles', 'Human Resource Management'];
+const timeSlots = ['08:00 AM - 09:00 AM', '09:00 AM - 10:00 AM', '10:00 AM - 11:00 AM', '11:00 AM - 12:00 PM', '01:00 PM - 02:00 PM', '02:00 PM - 03:00 PM', '03:00 PM - 04:00 PM', '04:00 PM - 05:00 PM', '05:00 PM - 06:00 PM'];
+
+const TimeTableForm = ({ edit = false, initialData = {}, onSubmit }) => {
+  const [department, setDepartment] = useState('');
   const [degree, setDegree] = useState('');
-  const [semOffered, setSemOffered] = useState('');
+  const [semester, setSemester] = useState('');
+  const [subject, setSubject] = useState('');
+  const [time, setTime] = useState('');
 
   useEffect(() => {
-    if (edit) {
-      setDegree(initialData.degree);
-      setSemOffered(initialData.semOffered);
+    if (edit && initialData) {
+      setDepartment(initialData.department || '');
+      setDegree(initialData.degree || '');
+      setSemester(initialData.semester || '');
+      setSubject(initialData.subject || '');
+      setTime(initialData.time || '');
+    } else {
+      setDepartment('');
+      setDegree('');
+      setSemester('');
+      setSubject('');
+      setTime(initialData.time || '');
     }
   }, [edit, initialData]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (edit) {
-      console.log("Changes Saved - Degree: ", degree);
-      console.log("Changes Saved - Semester Offered: ", semOffered);
-    } else {
-      console.log("New Entry - Degree: ", degree);
-      console.log("New Entry - Semester Offered: ", semOffered);
-    }
+    const data = { department, degree, semester, subject, time };
+    onSubmit(data);
   };
 
   return (
     <Container maxWidth="sm">
       <Typography variant="h4" gutterBottom>
-        {edit ? 'Edit Degree' : 'Add New Degree'}
+        {edit ? 'Edit Class' : 'Add New Class'}
       </Typography>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <TextField
-              label="Degree"
-              variant="outlined"
-              fullWidth
-              value={degree}
-              onChange={(e) => setDegree(e.target.value)}
-              required
-            />
+            <FormControl fullWidth variant="outlined">
+              <InputLabel>Department</InputLabel>
+              <Select
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                label="Department"
+                required
+              >
+                {departments.map((dept) => (
+                  <MenuItem key={dept} value={dept}>{dept}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
-          {/* Semester Offered Field */}
           <Grid item xs={12} sm={6}>
-            <TextField
-              label="Sem Offered"
-              variant="outlined"
-              fullWidth
-              value={semOffered}
-              onChange={(e) => setSemOffered(e.target.value)}
-              required
-            />
+            <FormControl fullWidth variant="outlined">
+              <InputLabel>Degree</InputLabel>
+              <Select
+                value={degree}
+                onChange={(e) => setDegree(e.target.value)}
+                label="Degree"
+                required
+              >
+                {degrees.map((deg) => (
+                  <MenuItem key={deg} value={deg}>{deg}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel>Semester</InputLabel>
+              <Select
+                value={semester}
+                onChange={(e) => setSemester(e.target.value)}
+                label="Semester"
+                required
+              >
+                {semesters.map((sem) => (
+                  <MenuItem key={sem} value={sem}>{sem}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel>Subject</InputLabel>
+              <Select
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                label="Subject"
+                required
+              >
+                {subjects.map((sub) => (
+                  <MenuItem key={sub} value={sub}>{sub}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel>Time Slot</InputLabel>
+              <Select
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                label="Time Slot"
+                required
+                disabled={edit} // Disable time slot selection in edit mode
+              >
+                {timeSlots.map((slot) => (
+                  <MenuItem key={slot} value={slot}>{slot}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={12}>
