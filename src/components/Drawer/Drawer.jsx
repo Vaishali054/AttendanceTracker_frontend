@@ -30,6 +30,7 @@ const navItems = [
   { text: 'Department', path: '/admindashboard/department' },
   { text: 'Timetable', path: '/admindashboard/timetable' },
   { text: 'Degree', path: '/admindashboard/degree' },
+  { text: 'Semester', path: '/admindashboard/semester' },
 ];
 
 export default function DrawerVariant(props) {
@@ -47,9 +48,11 @@ export default function DrawerVariant(props) {
       case '/admindashboard/department':
         return 'Add New Department';
       case '/admindashboard/timetable':
-        return 'Add New Timetable';
+        return 'Add New class in Timetable';
       case '/admindashboard/degree':
         return 'Add New Degree';
+      case '/admindashboard/semester':
+        return 'Add New Semester';
       default:
         return null;
     }
