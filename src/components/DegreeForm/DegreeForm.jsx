@@ -25,7 +25,7 @@ const DegreeForm = ({ edit = false, initialData = { degree: '', semOffered: '' }
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom textAlign='center'>
         {edit ? 'Edit Degree' : 'Add New Degree'}
       </Typography>
       <form onSubmit={handleSubmit}>
@@ -41,7 +41,6 @@ const DegreeForm = ({ edit = false, initialData = { degree: '', semOffered: '' }
             />
           </Grid>
 
-          {/* Semester Offered Field */}
           <Grid item xs={12} sm={6}>
             <TextField
               label="Sem Offered"
