@@ -6,60 +6,26 @@ import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
+import { Link as RouterLink } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
 import ForgotPassword from '../ForgotPassword/ForgotPassword';
 import { GoogleIcon } from '../CustomIcons/CustonIcons';
 import AppTheme from '../theme/AppTheme.tsx';
 import ColorModeSelect from '../theme/ColorModeSelect.tsx';
-
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  width: '100%',
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: 'auto',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
-  },
-  boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-  ...theme.applyStyles('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-  }),
-}));
-
-const SignInContainer = styled(Stack)(({ theme }) => ({
-  padding: 20,
-  marginTop: '10vh',
-  '&::before': {
-    content: '""',
-    display: 'block',
-    position: 'absolute',
-    zIndex: -1,
-    inset: 0,
-    backgroundImage:
-      'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
-    backgroundRepeat: 'no-repeat',
-    ...theme.applyStyles('dark', {
-      backgroundImage:
-        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
-    }),
-  },
-}));
+import { handleLogin } from '../../api/authAPI.jsx';
+import { useNavigate } from 'react-router-dom';
+import { Card, SignInContainer, determineRole } from '../../constants/constant.jsx';
 
 export default function LogIn(props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -69,22 +35,10 @@ export default function LogIn(props) {
     setOpen(false);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
-
   const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
@@ -93,7 +47,7 @@ export default function LogIn(props) {
       setEmailErrorMessage('');
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
       isValid = false;
@@ -103,6 +57,32 @@ export default function LogIn(props) {
     }
 
     return isValid;
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!validateInputs()) {
+      return;
+    }
+
+    try {
+      const role =determineRole(email);
+      const response = await handleLogin(email, password, role);
+      if (response.success) {
+        alert(response.message);
+        console.log(role);
+        document.cookie = `token=${response.token}; path=/`;
+        if(role==="admin"){
+          navigate("/admindashboard/teacher")
+        }
+      } else {
+        alert(response.message);
+      }
+
+    } catch (error) {
+      console.error('Error during login:', error);
+      alert('Internal server error. Please try again later.');
+    }
   };
 
   return (
@@ -143,8 +123,9 @@ export default function LogIn(props) {
                 required
                 fullWidth
                 variant="outlined"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 color={emailError ? 'error' : 'primary'}
-                sx={{ ariaLabel: 'email' }}
               />
             </FormControl>
             <FormControl>
@@ -167,10 +148,11 @@ export default function LogIn(props) {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                autoFocus
                 required
                 fullWidth
                 variant="outlined"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 color={passwordError ? 'error' : 'primary'}
               />
             </FormControl>
@@ -179,26 +161,26 @@ export default function LogIn(props) {
               type="submit"
               fullWidth
               variant="contained"
-              onClick={validateInputs}
             >
               Sign in
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
               Don&apos;t have an account?{' '}
               <span>
-                <Link
-                  variant="body2"
-                  sx={{ alignSelf: 'center' }}
-                >
-                  Sign up
-                </Link>
-              </span>
+    <RouterLink
+      to="/SignUp"
+      style={{ textDecoration: 'none', color: 'inherit' }} // Optional: styling for consistency
+    >
+      <Typography variant="body2" sx={{ display: 'inline', alignSelf: 'center' }}>
+        Sign up
+      </Typography>
+    </RouterLink>
+  </span>
             </Typography>
           </Box>
           <Divider>or</Divider>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Button
-              type="submit"
               fullWidth
               variant="outlined"
               onClick={() => alert('Sign in with Google')}
