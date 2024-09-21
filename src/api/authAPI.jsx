@@ -13,31 +13,19 @@ export const handleLogin = async (email, password, role) => {
   }
 };
 
-export const handleLogout = async () => {
+export const registerUser = async (values) => {
   try {
-    const response = await axiosInstance.post("/logout");
-    return response.data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      return error.response?.data || error.message;
-    }
-    throw error;
-  }
-};
-
-export const registerUser = async (name, email, password) => {
-  try {
-    const response = await axiosInstance.post("/register", {
-      name,
-      email,
-      password,
+    const response = await axiosInstance.post("auth/signup", {
+      name:values.name,
+      password: values.password,
+      semester: values.semester,
+      department: values.department,
+      role:"Student",
+      degree: values.degree,
+      email:values.email,
     });
-
-    if (response.status === 200 && response.data.success) {
-      return { success: true, data: response.data };
-    } else {
-      return { success: false, message: response.data.message };
-    }
+    console.log(response.data)
+    return response.data;
   } catch (error) {
     if (
       error.response &&
