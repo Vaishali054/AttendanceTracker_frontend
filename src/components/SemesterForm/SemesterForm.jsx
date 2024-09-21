@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Grid, Container, Typography } from '@mui/material';
 
-const SemesterForm = ({ edit = false, initialData = { degree: '', semester: '', department: '', numStudents: '' } }) => {
+const SemesterForm = ({ edit = false, initialData = { degree: '', semester: '', department: '', totalStudents: '' } }) => {
   const [degree, setDegree] = useState('');
   const [semester, setSemester] = useState('');
   const [department, setDepartment] = useState('');
-  const [numStudents, setNumStudents] = useState('');
+  const [totalStudents, setTotalStudents] = useState('');
 
   useEffect(() => {
     if (edit) {
       setDegree(initialData.degree);
       setSemester(initialData.semester);
       setDepartment(initialData.department);
-      setNumStudents(initialData.numStudents);
+      setTotalStudents(initialData.totalStudents);
     }
   }, [edit, initialData]);
 
@@ -22,12 +22,12 @@ const SemesterForm = ({ edit = false, initialData = { degree: '', semester: '', 
       console.log("Changes Saved - Degree: ", degree);
       console.log("Changes Saved - Semester: ", semester);
       console.log("Changes Saved - Department: ", department);
-      console.log("Changes Saved - Number of Students: ", numStudents);
+      console.log("Changes Saved - Number of Students: ", totalStudents);
     } else {
       console.log("New Entry - Degree: ", degree);
       console.log("New Entry - Semester: ", semester);
       console.log("New Entry - Department: ", department);
-      console.log("New Entry - Number of Students: ", numStudents);
+      console.log("New Entry - Number of Students: ", totalStudents);
     }
   };
 
@@ -77,8 +77,8 @@ const SemesterForm = ({ edit = false, initialData = { degree: '', semester: '', 
               variant="outlined"
               fullWidth
               type="number"
-              value={numStudents}
-              onChange={(e) => setNumStudents(e.target.value)}
+              value={totalStudents}
+              onChange={(e) => setTotalStudents(e.target.value)}
               required
             />
           </Grid>

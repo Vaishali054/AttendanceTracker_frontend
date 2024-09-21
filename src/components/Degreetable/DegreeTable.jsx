@@ -8,7 +8,7 @@ const DegreeTable = () => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    const fetchDepartments = async () => {
+    const fetchDegrees = async () => {
       try {
         const data = await getDegrees();
         const rowsWithCustomId = data.degrees.map((degree) => ({
@@ -21,7 +21,7 @@ const DegreeTable = () => {
         console.error(error);
       }
     };
-    fetchDepartments();
+    fetchDegrees();
   }, []);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);

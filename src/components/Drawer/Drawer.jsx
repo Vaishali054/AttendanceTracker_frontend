@@ -51,8 +51,6 @@ export default function DrawerVariant(props) {
         return 'Add New class in Timetable';
       case '/admindashboard/degree':
         return 'Add New Degree';
-      case '/admindashboard/semester':
-        return 'Add New Semester';
       default:
         return null;
     }

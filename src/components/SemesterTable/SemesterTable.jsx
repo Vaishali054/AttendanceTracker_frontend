@@ -1,14 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Button, Dialog, DialogActions, DialogContent, Box, Paper } from '@mui/material';
 import SemesterForm from '../SemesterForm/SemesterForm';
+import { getSemesters } from '../../api/fetchcmds';
 
 const SemesterTable = () => {
-  const [rows, setRows] = useState([
-    { id: 1, degree: 'B.Sc. Computer Science', semester: '6th Semester', department: 'Computer Science', numStudents: 30 },
-    { id: 2, degree: 'M.Sc. Computer Science', semester: '2nd Semester', department: 'Computer Science', numStudents: 25 },
-  ]);
+  const [rows, setRows] = useState([]);
 
+  useEffect(() => {
+    const fetchDegrees = async () => {
+      try {
+        const data = await getSemesters();
+        const rowsWithCustomId = data.semesters.map((semester) => ({
+          id: semester._id,
+          degree: semester.degree.degree, 
+          semester: semester.semester,
+          department: semester.department.department,
+          totalStudents: semester.totalStudents
+        }));
+        setRows(rowsWithCustomId);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchDegrees();
+  }, []);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
 
@@ -28,7 +44,7 @@ const SemesterTable = () => {
     { field: 'degree', headerName: 'Degree', width: 200 },
     { field: 'semester', headerName: 'Semester', width: 150 },
     { field: 'department', headerName: 'Department', width: 200 },
-    { field: 'numStudents', headerName: 'No. of Students', width: 200 },
+    { field: 'totalStudents', headerName: 'No. of Students', width: 200 },
     {
       field: 'actions',
       headerName: 'Actions',
