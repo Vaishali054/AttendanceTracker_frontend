@@ -59,18 +59,6 @@ const DepartmentForm = ({ edit = false, initialData = { name: '', noOfFaculty: '
               required
             />
           </Grid>
-          
-          <Grid item xs={12}>
-            <TextField
-              label="No. of Faculty"
-              variant="outlined"
-              fullWidth
-              type="number"
-              value={noOfFaculty}
-              onChange={(e) => setNoOfFaculty(e.target.value)}
-              required
-            />
-          </Grid>
 
           <Grid item xs={12}>
             <Typography variant="h6" gutterBottom>

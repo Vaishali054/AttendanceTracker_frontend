@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Grid, Container, Typography } from '@mui/material';
 
-const DegreeForm = ({ edit = false, initialData = { degree: '', semOffered: '' } }) => {
+const DegreeForm = ({ edit = false, initialData = { degree: '', totalSemester: '' } }) => {
   const [degree, setDegree] = useState('');
-  const [semOffered, setSemOffered] = useState('');
+  const [totalSemester, setTotalSemester] = useState('');
 
   useEffect(() => {
     if (edit) {
       setDegree(initialData.degree);
-      setSemOffered(initialData.semOffered);
+      setTotalSemester(initialData.totalSemester);
     }
   }, [edit, initialData]);
 
@@ -16,10 +16,10 @@ const DegreeForm = ({ edit = false, initialData = { degree: '', semOffered: '' }
     event.preventDefault();
     if (edit) {
       console.log("Changes Saved - Degree: ", degree);
-      console.log("Changes Saved - Semester Offered: ", semOffered);
+      console.log("Changes Saved - Semester Offered: ", totalSemester);
     } else {
       console.log("New Entry - Degree: ", degree);
-      console.log("New Entry - Semester Offered: ", semOffered);
+      console.log("New Entry - Semester Offered: ", totalSemester);
     }
   };
 
@@ -46,8 +46,8 @@ const DegreeForm = ({ edit = false, initialData = { degree: '', semOffered: '' }
               label="Sem Offered"
               variant="outlined"
               fullWidth
-              value={semOffered}
-              onChange={(e) => setSemOffered(e.target.value)}
+              value={totalSemester}
+              onChange={(e) => setTotalSemester(e.target.value)}
               required
             />
           </Grid>

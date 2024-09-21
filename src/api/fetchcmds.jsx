@@ -13,3 +13,16 @@ export const getDepartments=async()=>{
           throw error;
     }
 }
+export const getDegrees=async()=>{
+    try{
+        const response =await axiosInstance.get('/admin/degree/get');
+        console.log(response.data)
+        return response.data;
+    }
+    catch(error){
+        if (error instanceof AxiosError) {
+            return error.response?.data || error.message;
+          }
+          throw error;
+    }
+}
