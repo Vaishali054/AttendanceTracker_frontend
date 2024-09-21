@@ -1,45 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Paper, Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 import DepartmentForm from '../DepartmentForm/DeaprtmentForm';
+import { getDepartments } from '../../api/fetchcmds';
 
 export default function Depttable() {
-  const [rows, setRows] = useState([
-    { id: 1, name: "Computer Science", noOfFaculty: 25, degreesOffered: ["B.Sc", "M.Sc", "Ph.D"] },
-    { id: 2, name: "Mechanical Engineering", noOfFaculty: 30, degreesOffered: ["B.Tech", "M.Tech"] },
-    { id: 3, name: "Physics", noOfFaculty: 15, degreesOffered: ["B.Sc", "M.Sc"] },
-    { id: 4, name: "Mathematics", noOfFaculty: 20, degreesOffered: ["B.Sc", "M.Sc", "Ph.D"] },
-    { id: 5, name: "Chemistry", noOfFaculty: 18, degreesOffered: ["B.Sc", "M.Sc", "Ph.D"] }
-  ]);
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const data = await getDepartments();
+        const rowsWithCustomId = data.map((department) => ({
+          id: department._id,
+          department: department.department, 
+          degreeOffered: department.degreeOffered, 
+          totalfaculty: department.totalfaculty,
+        }));
+        setRows(rowsWithCustomId);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchDepartments();
+  }, []);
 
   const [selectedRow, setSelectedRow] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
 
   const handleEditClick = (row) => {
-    console.log(row);
-    setSelectedRow(row); 
-    setOpenEditDialog(true); 
+    setSelectedRow(row);
+    setOpenEditDialog(true);
   };
 
   const handleFormSubmit = (updatedData) => {
     setRows((prevRows) =>
       prevRows.map((row) => (row.id === updatedData.id ? updatedData : row))
     );
-    setOpenEditDialog(false); 
+    setOpenEditDialog(false);
   };
 
   const columns = [
-    { field: 'name', headerName: 'Name', width: 200 },
-    { field: 'noOfFaculty', headerName: 'No. of Faculty', width: 200 },
-    { 
-      field: 'degreesOffered', 
-      headerName: 'Degrees Offered', 
+    { field: 'department', headerName: 'Name', width: 200 },
+    { field: 'totalfaculty', headerName: 'No. of Faculty', width: 200 },
+    {
+      field: 'degreeOffered',
+      headerName: 'Degrees Offered',
       width: 300,
       renderCell: (params) => (
         <div>
-          {params.value.join(', ')}
+          {params.value.map((degree) => degree.degree).join(', ')}
         </div>
-      )
+      ),
     },
     {
       field: 'actions',
@@ -59,16 +71,16 @@ export default function Depttable() {
 
   return (
     <>
-      <Box 
-        sx={{ 
+      <Box
+        sx={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           marginTop: '50px',
-          width: '100%'
+          width: '100%',
         }}
       >
-        <Paper sx={{ height: '100%'}}>
+        <Paper sx={{ height: '100%' }}>
           <DataGrid
             rows={rows}
             columns={columns}

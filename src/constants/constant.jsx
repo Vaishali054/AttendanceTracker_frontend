@@ -99,9 +99,9 @@ export const data = [
     if (email === 'admin@nith.ac.in') {
       return 'admin';
     } else if (/^\d/.test(email)) {  // checks if email starts with a number
-      return 'student';
+      return 'Student';
     } else {
-      return 'teacher';
+      return 'Teacher';
     }
   };
 
