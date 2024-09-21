@@ -12,8 +12,13 @@ import AppTheme from '../theme/AppTheme.tsx';
 import ColorModeSelect from '../theme/ColorModeSelect.tsx';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+import InputAdornment from '@mui/material/InputAdornment';
 import { Card, SignUpContainer } from "../../constants/constant.jsx";
 import { getDepartments } from '../../api/fetchcmds.jsx';
+import { sendOTP, verifyOTP } from '../../api/verify.jsx';
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { registerUser } from '../../api/authAPI.jsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function SignUp(props) {
   const [emailError, setEmailError] = React.useState(false);
@@ -28,6 +33,10 @@ export default function SignUp(props) {
   const [degree, setDegree] = React.useState('');
   const [totalSemesters, setTotalSemesters] = React.useState(0);
   const [semester, setSemester] = React.useState('');
+  const [open, setOpen] = React.useState(false); 
+  const [otp, setOtp] = React.useState(''); 
+  const [token, setToken] = React.useState('');
+  const navigate=useNavigate();
 
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -59,6 +68,34 @@ export default function SignUp(props) {
     if (selectedDegree) {
       setTotalSemesters(selectedDegree.totalSemester); 
       setSemester(''); 
+    }
+  };
+
+  const handleEmailVerification = async () => {
+    const emailValue = document.getElementById('email').value;
+    if (!/\S+@\S+\.\S+/.test(emailValue)) {
+      setEmailError(true);
+      setEmailErrorMessage('Please enter a valid email address before verifying.');
+      return;
+    }
+    try {
+      const data = await sendOTP(emailValue);
+      console.log(data);
+      alert(data.message);
+      setOpen(true);
+      setToken(data.token);
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+    }
+  };
+
+  const handleOtpVerification = async () => {
+    try {
+      const data = await verifyOTP(token, otp); 
+      alert(data.message);
+      setOpen(false); 
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
     }
   };
 
@@ -98,18 +135,26 @@ export default function SignUp(props) {
     return isValid;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit =async (event) => {
     event.preventDefault();
     if (validateInputs()) {
-      const data = new FormData(event.currentTarget);
-      console.log({
-        name: data.get('name'),
-        email: data.get('email'),
-        password: data.get('password'),
+      const formData = new FormData(event.currentTarget);
+      const formValues = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        password: formData.get('password'),
         department: dept,
         degree: degree,
         semester: semester,
-      });
+      };
+
+      const data=await registerUser(formValues);
+      console.log(data)
+      alert(data.message);
+
+      if(data.success){
+        navigate('/')
+      }
     }
   };
 
@@ -152,6 +197,32 @@ export default function SignUp(props) {
                   color={nameError ? 'error' : 'primary'}
                 />
               </FormControl>
+
+              <FormControl>
+                <FormLabel htmlFor="email">Email</FormLabel>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  placeholder="your@email.com"
+                  name="email"
+                  autoComplete="email"
+                  variant="outlined"
+                  error={emailError}
+                  helperText={emailErrorMessage}
+                  color={emailError ? 'error' : 'primary'}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Button variant="contained" onClick={handleEmailVerification}>
+                          Verify
+                        </Button>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+              </FormControl>
+
               <FormControl>
                 <FormLabel htmlFor="dept">Departments</FormLabel>
                 <Select
@@ -160,13 +231,14 @@ export default function SignUp(props) {
                   onChange={handleDeptChange}
                   {...props}
                 >
-                  {departments.map((department) => (
+                  {Array.isArray(departments) && departments.length > 0 && departments.map((department) => (
                     <MenuItem key={department._id} value={department._id}>
                       {department.department}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
+
               <FormControl>
                 <FormLabel htmlFor="degree">Degree</FormLabel>
                 <Select
@@ -176,13 +248,14 @@ export default function SignUp(props) {
                   disabled={!dept}
                   {...props}
                 >
-                  {degrees.map((deg) => (
+                  {degrees.length > 0 && degrees.map((deg) => (
                     <MenuItem key={deg._id} value={deg._id}>
                       {deg.degree}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
+
               <FormControl>
                 <FormLabel htmlFor="semester">Semester</FormLabel>
                 <Select
@@ -199,21 +272,7 @@ export default function SignUp(props) {
                   ))}
                 </Select>
               </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="email">Email</FormLabel>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  placeholder="your@email.com"
-                  name="email"
-                  autoComplete="email"
-                  variant="outlined"
-                  error={emailError}
-                  helperText={emailErrorMessage}
-                  color={emailError ? 'error' : 'primary'}
-                />
-              </FormControl>
+
               <FormControl>
                 <FormLabel htmlFor="password">Password</FormLabel>
                 <TextField
@@ -230,17 +289,39 @@ export default function SignUp(props) {
                   color={passwordError ? 'error' : 'primary'}
                 />
               </FormControl>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-              >
+
+              <Button type="submit" fullWidth variant="contained">
                 Sign up
               </Button>
             </Box>
           </Card>
         </Stack>
       </SignUpContainer>
+
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>Enter OTP</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="otp"
+            label="OTP"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)} 
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleOtpVerification} color="primary">
+            Verify OTP
+          </Button>
+        </DialogActions>
+      </Dialog>
     </AppTheme>
   );
 }
