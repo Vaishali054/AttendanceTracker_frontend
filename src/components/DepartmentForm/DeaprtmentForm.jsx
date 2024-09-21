@@ -1,49 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Grid, Container, Typography, IconButton} from '@mui/material';
+import { TextField, Button, Grid, Container, Typography, IconButton, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import { getDegrees } from '../../api/fetchcmds';
 
-const DepartmentForm = ({ edit = false, initialData = { name: '', noOfFaculty: '', degreesOffered: [] } }) => {
-  const [name, setName] = useState('');
-  const [noOfFaculty, setNoOfFaculty] = useState('');
-  const [degreesOffered, setDegreesOffered] = useState([]);
+const DepartmentForm = ({ edit = false, initialData = { department: '', totalfaculty: '', degreeOffered: [] } }) => {
+  const [department, setDepartment] = useState('');
+  const [totalfaculty, setTotalFaculty] = useState('');
+  const [degreeOffered, setDegreeOffered] = useState([]);
+  const [availableDegrees, setAvailableDegrees] = useState([]);
+  const [newDegree, setNewDegree] = useState('');
+
+  useEffect(() => {
+    const fetchDegrees = async () => {
+      try {
+        const degrees = await getDegrees();
+        setAvailableDegrees(degrees.degrees);
+      } catch (error) {
+        console.error("Failed to fetch degrees", error);
+      }
+    };
+    fetchDegrees();
+  }, []);
 
   useEffect(() => {
     if (edit) {
-      setName(initialData.name);
-      setNoOfFaculty(initialData.noOfFaculty);
-      setDegreesOffered(initialData.degreesOffered);
+      setDepartment(initialData.department);
+      setTotalFaculty(initialData.totalfaculty);
+      setDegreeOffered(initialData.degreeOffered || []);
     }
   }, [edit, initialData]);
 
   const handleAddDegree = () => {
-    setDegreesOffered([...degreesOffered, '']);
-  };
-
-  const handleDegreeChange = (index, value) => {
-    const updatedDegrees = degreesOffered.map((degree, i) => (i === index ? value : degree));
-    setDegreesOffered(updatedDegrees);
+    if (newDegree) {
+      setDegreeOffered([...degreeOffered, { degree: newDegree }]);
+      setNewDegree(''); 
+    }
   };
 
   const handleRemoveDegree = (index) => {
-    setDegreesOffered(degreesOffered.filter((_, i) => i !== index));
+    setDegreeOffered(degreeOffered.filter((_, i) => i !== index));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const departmentData = {
+      department,
+      totalfaculty,
+      degreeOffered,
+    };
+
     if (edit) {
-      console.log("Changes Saved - Name: ", name);
-      console.log("Changes Saved - No. of Faculty: ", noOfFaculty);
-      console.log("Changes Saved - Degrees Offered: ", degreesOffered);
+      console.log("Changes Saved - Department: ", departmentData);
     } else {
-      console.log("New Entry - Name: ", name);
-      console.log("New Entry - No. of Faculty: ", noOfFaculty);
-      console.log("New Entry - Degrees Offered: ", degreesOffered);
+      console.log("New Entry - Department: ", departmentData);
     }
   };
 
   return (
-    <Container maxWidth="sm" height='100%'>
+    <Container maxWidth="sm">
       <Typography variant="h4" gutterBottom textAlign='center'>
         {edit ? 'Edit Department' : 'Add New Department'}
       </Typography>
@@ -51,11 +66,22 @@ const DepartmentForm = ({ edit = false, initialData = { name: '', noOfFaculty: '
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
-              label="Name"
+              label="Department Name"
               variant="outlined"
               fullWidth
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              required
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              label="Total Faculty"
+              variant="outlined"
+              fullWidth
+              value={totalfaculty}
+              onChange={(e) => setTotalFaculty(e.target.value)}
               required
             />
           </Grid>
@@ -64,18 +90,10 @@ const DepartmentForm = ({ edit = false, initialData = { name: '', noOfFaculty: '
             <Typography variant="h6" gutterBottom>
               Degrees Offered
             </Typography>
-            {degreesOffered.map((degree, index) => (
-              <Grid container spacing={1} key={index}>
+            {degreeOffered.map((degree, index) => (
+              <Grid container spacing={1} key={index} alignItems="center">
                 <Grid item xs={10}>
-                  <TextField
-                    label={`Degree ${index + 1}`}
-                    variant="outlined"
-                    fullWidth
-                    value={degree}
-                    onChange={(e) => handleDegreeChange(index, e.target.value)}
-                    required
-                    sx={{ marginTop: 2 }}
-                  />
+                  <Typography variant="body1">{degree.degree}</Typography>
                 </Grid>
                 <Grid item xs={2} sx={{ display: 'flex', alignItems: 'center' }}>
                   <IconButton onClick={() => handleRemoveDegree(index)} color="error">
@@ -84,16 +102,36 @@ const DepartmentForm = ({ edit = false, initialData = { name: '', noOfFaculty: '
                 </Grid>
               </Grid>
             ))}
-            <Button
-              variant="outlined"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={handleAddDegree}
-              sx={{ marginTop: 2, width: '83%'}}
-              
-            >
-              Add Degree
-            </Button>
+            
+            <Grid container spacing={1} alignItems="center" sx={{ marginTop: 2 }}>
+              <Grid item xs={10}>
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel>New Degree</InputLabel>
+                  <Select
+                    label="New Degree"
+                    value={newDegree}
+                    onChange={(e) => setNewDegree(e.target.value)}
+                  >
+                    {availableDegrees.map((deg) => (
+                      <MenuItem key={deg._id} value={deg.degree}>
+                        {deg.degree}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={2}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<AddIcon />}
+                  onClick={handleAddDegree}
+                  sx={{ width: '100%' }}
+                >
+                  Add
+                </Button>
+              </Grid>
+            </Grid>
           </Grid>
 
           <Grid item xs={12}>
